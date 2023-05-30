@@ -1,0 +1,67 @@
+version: '3.9'
+
+services:
+  web_container1:
+    image: my-tomcat-image
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+    volumes:
+      - web_container1_data:/usr/local/tomcat/webapps
+    ports:
+      - "8081:8080"
+
+  web_container2:
+    image: my-tomcat-image
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+    volumes:
+      - web_container2_data:/usr/local/tomcat/webapps
+    ports:
+      - "8082:8080"
+
+  stream_container1:
+    image: my-tomcat-image
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+    volumes:
+      - stream_container1_data:/usr/local/tomcat/webapps
+    ports:
+      - "8083:8080"
+
+  stream_container2:
+    image: my-tomcat-image
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+    volumes:
+      - stream_container2_data:/usr/local/tomcat/webapps
+    ports:
+      - "8084:8080"
+
+
+
+volumes:
+  web_container1_data:
+    driver: local
+    driver_opts:
+      o: size=10G
+  web_container2_data:
+    driver: local
+    driver_opts:
+      o: size=10G
+  stream_container1_data:
+    driver: local
+    driver_opts:
+      o: size=10G
+  stream_container2_data:
+    driver: local
+    driver_opts:
+      o: size=10G
+

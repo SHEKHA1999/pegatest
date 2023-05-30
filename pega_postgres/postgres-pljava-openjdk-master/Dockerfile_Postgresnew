@@ -1,0 +1,43 @@
+# Use the official PostgreSQL image from the dockerhub
+FROM postgres:13
+
+# Set the working directory
+WORKDIR /docker-entrypoint-initdb.d/
+
+# Update the system and install necessary system utilities
+RUN apt-get update && apt-get install -y \
+    git \
+    maven \
+    openjdk-11-jdk \
+    postgresql-server-dev-13 \
+    build-essential \
+    libssl-dev \
+    protobuf-c-compiler \
+    libprotobuf-c-dev \
+    libecpg-dev \
+    libkrb5-dev
+
+# Clone the PLJava repository
+RUN git clone https://github.com/tada/pljava.git
+
+# Change into the PLJava directory
+WORKDIR /docker-entrypoint-initdb.d/pljava/
+
+# Build and install PLJava
+RUN mvn clean install \
+    && ls -la pljava-packaging/target/
+
+# && java -jar pljava-packaging/target/pljava-pg13*-amd64-Linux-gpp.jar
+
+# Expose PostgreSQL port
+EXPOSE 5432
+# Set environment variables for the database
+ENV POSTGRES_DB=postgres
+ENV POSTGRES_USER=postgres
+ENV POSTGRES_PASSWORD=postgres
+
+# Add initialization scripts (if any)
+#COPY ./init/ /docker-entrypoint-initdb.d/
+
+# Run PostgreSQL server
+CMD ["postgres"]

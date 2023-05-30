@@ -1,0 +1,38 @@
+# Use a base image that includes Tomcat
+#FROM tomcat:9.0
+
+# Add a pegauser and make it the owner of the CATALINA_HOME directory
+#RUN addgroup --system pegauser && adduser --system --ingroup pegauser pegauser \
+ #   && chown -R pegauser:root ${CATALINA_HOME}
+
+# Copy the prweb application and the PostgreSQL JDBC driver into the container
+# (assuming these files are in the same directory as your Dockerfile)
+#COPY --chown=pegauser:root prweb ${CATALINA_HOME}/webapps/prweb
+#COPY --chown=pegauser:root postgresql-42.1.1.jre7.jar ${CATALINA_HOME}/lib/
+
+# Set the necessary permissions on the prweb directory
+#RUN chmod -R g+rw ${CATALINA_HOME}/webapps/prweb
+
+# Set environment variables for the JDBC connection
+#ENV JDBC_URL=jdbc:postgresql://172.17.0.2:5432/postgres \
+   # JDBC_CLASS=org.postgresql.Driver \
+  #  DB_USERNAME=postgres \
+ #   DB_PASSWORD=postgres
+
+# Expose port 8080
+#EXPOSE 8080
+# Use the official Tomcat image as a parent image
+FROM tomcat:9.0
+
+# Remove the default Tomcat applications
+RUN rm -rf /usr/local/tomcat/webapps/*
+
+# Copy the WAR file into the Tomcat webapps directory
+COPY ./prweb.war /usr/local/tomcat/webapps/ROOT.war
+
+# Expose port 8080
+EXPOSE 8080
+
+# Start Tomcat
+CMD ["catalina.sh", "run"]
+

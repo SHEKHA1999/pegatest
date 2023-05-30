@@ -1,0 +1,25 @@
+version: '3'
+services:
+  postgres_container:
+    image: postgres_image
+    volumes:
+      - type: bind
+        source: ./117149_PE_8.7/data
+        target: /tmp/resources/
+    ports:
+      - "5433:5432"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 4096M
+    networks:
+      - app-network
+    environment:
+      - POSTGRES_PASSWORD=postgres  
+      - POSTGRES_USER=postgres  
+      - POSTGRES_DB=postgres  
+
+networks:
+  app-network:
+    driver: bridge

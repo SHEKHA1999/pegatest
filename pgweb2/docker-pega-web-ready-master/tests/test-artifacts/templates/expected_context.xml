@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Context>
+  <!-- When including prconfig settings as JNDI environment entries, make sure that:
+    1. JNDI names are unique.
+    2. No JNDI names are wholely included as the prefix to another JNDI name. 
+       Ie, 'abc/feature1' and 'abc/feature1/threshold' can't be bound to objects.
+  -->
+
+  <WatchedResource>WEB-INF/web.xml</WatchedResource>
+
+  <Manager pathname="" />
+  
+  	<Resource name="jdbc/PegaRULES"
+		auth="Container"
+		type="javax.sql.DataSource"
+		driverClassName="org.postgresql.Driver"
+		url="jdbc:postgresql://localhost:5432/pegadb"
+		username="postgres"
+		password="postgres"
+		maxTotal="75"
+		minIdle="3"
+		maxIdle="25"
+		maxWaitMillis="10000"
+        initialSize="0"
+        connectionProperties=""
+        timeBetweenEvictionRunsMillis="30000"
+        minEvictableIdleTimeMillis="60000"
+	/>
+
+  <Environment name="url/initialization/explicittempdir" value="path" type="java.lang.String"/>
+  <Environment name="prconfig/database/databases/PegaRULES/defaultSchema" value="rules" type="java.lang.String" />
+  <Environment name="prconfig/database/databases/PegaDATA/defaultSchema"  value="data"  type="java.lang.String" />
+  
+  <Environment name="prconfig/database/databases/CustomerData/defaultSchema" value="data" type="java.lang.String" />
+  
+  <Environment name="prconfig/database/drivers" value="com.microsoft.sqlserver.jdbc.SQLServerDriver;oracle.jdbc.OracleDriver;org.postgresql.Driver;com.ibm.db2.jcc.DB2Driver" type="java.lang.String" />
+</Context>   
+

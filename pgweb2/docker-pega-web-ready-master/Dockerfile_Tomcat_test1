@@ -1,0 +1,50 @@
+# Use the official image as a parent image
+FROM openjdk:8-jdk
+
+# Set the working directory in the container
+WORKDIR /opt/tomcat
+
+# Variables
+ENV CATALINA_HOME="/opt/tomcat"
+ENV CATALINA_PID="/opt/tomcat/temp/tomcat.pid"
+ENV CATALINA_OPTS="-Xms512M -Xmx1024M -server -XX:+UseParallelGC"
+ENV JAVA_OPTS="-Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom"
+
+# Add group and user
+RUN groupadd tomcat
+RUN useradd -s /bin/false -g tomcat -d "$CATALINA_HOME" tomcat
+
+# Download and install Tomcat
+# Download and install Tomcat
+ADD https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.75/bin/apache-tomcat-9.0.75.tar.gz /tmp/
+RUN tar xzvf /tmp/apache-tomcat-9.0.75.tar.gz -C /opt/tomcat --strip-components=1
+
+# Download and install JDBC driver
+ADD https://jdbc.postgresql.org/download/postgresql-42.2.5.jar "$CATALINA_HOME"/lib/
+
+# Permissions
+RUN chgrp -R tomcat "$CATALINA_HOME"
+RUN chmod -R g+r "$CATALINA_HOME"/conf
+RUN chmod g+x "$CATALINA_HOME"/conf
+RUN chown -R tomcat "$CATALINA_HOME"/webapps/ "$CATALINA_HOME"/work/ "$CATALINA_HOME"/temp/ "$CATALINA_HOME"/logs/
+
+#DB Paramter
+ENV JDBC_URL jdbc:postgresql://172.17.0.2:5432/postgres
+ENV JDBC_CLASS org.postgresql.Driver
+ENV DB_USERNAME postgres
+ENV DB_PASSWORD postgres
+
+# Copy war and context.xml files
+COPY ./prweb.war "$CATALINA_HOME"/webapps/
+COPY ./prhelp.war "$CATALINA_HOME"/webapps/
+#COPY ./webapps/prsysmgmt.war "$CATALINA_HOME"/webapps/
+#COPY /op/tocat/conf/context.xml "$CATALINA_HOME"/conf/
+RUN sed -i 's/@PG_PORT/5432/g' "$CATALINA_HOME"/conf/context.xml
+
+# Expose port 8080
+EXPOSE 8080
+
+# Run the command on container startup
+#CMD ["$CATALINA_HOME/bin/catalina.sh", "run"]
+CMD /opt/tomcat/bin/catalina.sh run
+

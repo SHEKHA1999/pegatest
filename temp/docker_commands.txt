@@ -1,0 +1,80 @@
+Useful docker commands:
+1. Create docker postgres image and run the container
+$docker build -t postgres_image -f C:\Users\ajayb\Docker_Configuration\tomcat-docker\dockerfile_db  .
+$docker run --name postgres_db_container -p 5432:5432 -d postgres_image
+
+by using simple command
+$docker build -t postgres -f C:\Users\ajayb\Docker_Configuration\tomcat-docker\dockerfile_db  .
+$docker run -p 5433:5432  --name pega-postgres   postgres
+
+2.run command inside docker contrainer:
+$docker exec -it my-postgres-container bash
+
+3. up or down docker container using docker compose
+$docker-compose -f C:\Users\ajayb\Docker_Configuration\tomcat-docker\Docker_compose_postgres.yml up -d  # here -d refers detached mode
+$docker-compose down postgresql-pega-backend
+
+eg.
+$docker-compose -f C:\Users\ajayb\Docker_Configuration\tomcat-docker\PegaPRPC-WebApp\resources\pega_stream_background.yml up 
+
+
+4. install docker machine using powershell
+Invoke-WebRequest -Uri "https://github.com/docker/machine/releases/download/v0.16.2/docker-machine-Windows-x86_64.exe" -OutFile "C:\tools\docker-machine.exe"
+
+
+5.add docker machine to system path:
+$[Environment]::SetEnvironmentVariable("Path", [Environment]::GetEnvironmentVariable("Path", [EnvironmentVariableTarget]::Machine) + ";C:\Users\ajayb\Docker_Configuration\tomcat-docker", [EnvironmentVariableTarget]::Machine)
+
+
+6. docker inspect
+$docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' pega-postgres
+
+
+7. conect to postgres db running inside the docker container
+$docker exec -it  pega-postgres psql -U postgres
+
+8. copy content inside docker container
+$docker cp C:\Users\ajayb\Docker_Configuration\tomcat-docker\117149_PE_8.7\data\pega.dump pega-postgres:var/lib/postgresql-persist/data
+
+
+9. check whether a docker container is accepting TCP/IP connection or not? by using powershell:
+$Test-NetConnection -ComputerName 172.17.0.3 -Port 5432
+
+10.copy pega.dump  file into postgres docker container and restore pega related db/tables/schemas into postgres
+
+$docker cp C:\Users\ajayb\Docker_Configuration\tomcat-docker\117149_PE_8.7\data\pega.dump pega-postgres:var/lib/postgresql-persist/data
+$pg_restore -U postgres -d postgres pega.dump
+
+
+11.run bash shell inside a docker container
+$docker exec -it docker_container_name bash
+
+
+
+
+-----------------------------------------------------------------------
+
+Realated to postgres:
+useeful postgressql path: cd /var/lib/postgresql/data
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+

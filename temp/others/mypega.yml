@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-pega-component
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-pega-component
+  template:
+    metadata:
+      labels:
+        app: my-pega-component
+    spec:
+      containers:
+      - name: my-pega-component
+        image: username/repository:tag
+        resources:
+          limits:
+            memory: "2Gi"
+            cpu: "1"
+        ports:
+        - containerPort: 8080
+      volumes:
+      - name: my-pega-component-volume
+        persistentVolumeClaim:
+          claimName: my-pega-component-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: my-pega-component-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+

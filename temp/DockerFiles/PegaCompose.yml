@@ -1,0 +1,48 @@
+ersion: "3.9"
+
+services:
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: pega
+      POSTGRES_PASSWORD: pega
+      POSTGRES_DB: pegadb
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  pega-web-1:
+    image: pega-web:latest
+    depends_on:
+      - postgres
+    environment:
+      PEGA_DB_URL: jdbc:postgresql://postgres:5432/pegadb
+      PEGA_DB_USERNAME: pega
+      PEGA_DB_PASSWORD: pega
+
+  pega-web-2:
+    image: pega-web:latest
+    depends_on:
+      - postgres
+    environment:
+      PEGA_DB_URL: jdbc:postgresql://postgres:5432/pegadb
+      PEGA_DB_USERNAME: pega
+      PEGA_DB_PASSWORD: pega
+
+  pega-stream-1:
+    image: pega-stream:latest
+
+  pega-stream-2:
+    image: pega-stream:latest
+
+  pega-background:
+    image: pega-background:latest
+    depends_on:
+      - postgres
+    environment:
+      PEGA_DB_URL: jdbc:postgresql://postgres:5432/pegadb
+      PEGA_DB_USERNAME: pega
+      PEGA_DB_PASSWORD: pega
+
+volumes:
+  db-data:
+

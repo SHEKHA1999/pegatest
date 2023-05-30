@@ -1,0 +1,18 @@
+# Use the official PostgreSQL image as the base image
+FROM pegasystems/postgres-pljava-openjdk
+
+# Set environment variables for PostgreSQL configuration
+ENV PGDATA var/lib/postgresql-persist/data
+ENV POSTGRES_USER postgres
+ENV POSTGRES_PASSWORD postgres
+ENV POSTGRES_DB postgres
+
+#a Expose the default PostgreSQL port
+EXPOSE 5432
+
+# Add any custom configuration or scripts as needed
+# COPY ./path-to-your-custom-config-file /var/lib/postgresql/data/pgdata/
+# RUN chmod +x /var/lib/postgresql/data/pgdata/your-custom-script.sh
+
+# Set the default command to run when the container starts
+CMD ["postgres"]

@@ -1,0 +1,85 @@
+version: '3'
+services:
+  web_container1:
+    image: tomcat:latest
+    volumes:
+      - type: bind
+        source: ./web_container1
+        target: /usr/local/tomcat/webapps
+    ports:
+      - "8081:8080"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 2048M
+    networks:
+      - app-network
+
+  web_container2:
+    image: tomcat:latest
+    volumes:
+      - type: bind
+        source: ./web_container2
+        target: /usr/local/tomcat/webapps
+    ports:
+      - "8082:8080"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 2048M
+    networks:
+      - app-network
+
+  stream_container1:
+    image: tomcat:latest
+    volumes:
+      - type: bind
+        source: ./stream_container1
+        target: /usr/local/tomcat/webapps
+    ports:
+      - "8083:8080"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 2048M
+    networks:
+      - app-network
+
+  stream_container2:
+    image: tomcat:latest
+    volumes:
+      - type: bind
+        source: ./stream_container2
+        target: /usr/local/tomcat/webapps
+    ports:
+      - "8084:8080"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 2048M
+    networks:
+      - app-network
+
+  background_container:
+    image: tomcat:latest
+    volumes:
+      - type: bind
+        source: ./background_container
+        target: /usr/local/tomcat/webapps
+    ports:
+      - "8085:8080"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 2048M
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

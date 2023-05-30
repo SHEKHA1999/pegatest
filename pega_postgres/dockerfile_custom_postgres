@@ -1,0 +1,35 @@
+FROM pegasystems/postgres-pljava-openjdk
+
+USER root
+RUN dnf clean all && dnf makecache
+
+RUN dnf update -y && \
+    dnf install -y java-11-openjdk-devel && \
+    dnf clean all
+
+# Install necessary build tools and dependencies
+RUN dnf install -y git maven gcc make postgresql12-devel
+
+# Clone PL/Java repository
+RUN git clone --branch REL1_5_1 https://github.com/tada/pljava.git
+
+# Build PL/Java
+RUN cd pljava && \
+    mvn clean install -Pwnosign
+
+# Install PL/Java
+RUN cd pljava/pljava-packaging/target && \
+    cp pljava-pg12-1.5.1-SNAPSHOT.jar /usr/pgsql-12/lib/ && \
+    cp pljava-pg12-1.5.1-SNAPSHOT.so /usr/pgsql-12/lib/ && \
+    cd /
+
+# Clean up PL/Java repository
+RUN rm -rf pljava
+
+# Clean up build tools and dependencies
+RUN dnf remove -y git maven gcc make postgresql12-devel && \
+    dnf clean all
+
+COPY ./pljava_init.sql /docker-entrypoint-initdb.d/
+
+USER 26

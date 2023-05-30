@@ -1,0 +1,40 @@
+schemaVersion: "2.0.0"
+
+# Verify metadata of the docker file
+fileExistenceTests:
+# Check for test folder in release image
+- name: 'test artifacts folder check'
+  path: '/tests'
+  shouldExist: false
+  permissions: 'drwxrwxrwx'
+- name: '/bin/detemplatize'
+  path: '/bin/detemplatize'
+  shouldExist: true
+  permissions: '-rwxr-xr-x'
+  uid: 0
+  gid: 0
+  isExecutableBy: 'group'
+commandTests:
+- name: "test permission with non root user"
+  command: "bash"
+  args:
+    - -c
+    - |
+      bash -c 'cd root'
+  exitCode: 1
+- name: "check current user"
+  command: "whoami"
+  expectedOutput: ["pegauser"]
+- name: "verify detemplatize installation"
+  envVars:
+    - key: "ACTION"
+      value: "pre-upgrade"
+    - key: "LANG1"
+      value: "en_US.UTF-8"
+  command: "bash"
+  args:
+    - -c
+    - |
+      bash -c ' echo "action={{.Env.ACTION }} lang={{.Env.LANG1}}" > /tmp/test.tmpl && /bin/detemplatize -template /tmp/test.tmpl:/tmp/test.txt  &&  cat /tmp/test.txt | grep  "action=pre-upgrade lang=en_US.UTF-8" '
+  exitCode: 0
+  expectedOutput: [ ".*action=pre-upgrade lang=en_US.UTF-8.*" ]
